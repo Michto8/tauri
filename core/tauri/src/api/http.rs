@@ -80,7 +80,7 @@ impl ClientBuilder {
   /// Builds the Client.
   pub fn build(self) -> crate::api::Result<Client> {
     let mut client_builder = reqwest::Client::builder();
-    println!("build Client!");
+    
     if let Some(max_redirections) = self.max_redirections {
       client_builder = client_builder.redirect(if max_redirections == 0 {
         reqwest::redirect::Policy::none()
@@ -545,6 +545,7 @@ mod test {
       Self {
         max_redirections: Option::arbitrary(g),
         connect_timeout: Option::arbitrary(g),
+        no_proxy: Option::arbitrary(g),
       }
     }
   }
