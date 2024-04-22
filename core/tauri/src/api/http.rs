@@ -46,6 +46,8 @@ pub struct ClientBuilder {
   /// Connect timeout for the request.
   #[serde(deserialize_with = "deserialize_duration", default)]
   pub connect_timeout: Option<Duration>,
+
+  pub no_proxy: Option<bool>,
 }
 
 impl ClientBuilder {
@@ -68,10 +70,17 @@ impl ClientBuilder {
     self
   }
 
+   /// Sets the connection timeout.
+   #[must_use]
+   pub fn no_proxy(mut self, no_proxy: bool) -> Self {
+     self.no_proxy = Some(no_proxy);
+     self
+   }
+
   /// Builds the Client.
   pub fn build(self) -> crate::api::Result<Client> {
     let mut client_builder = reqwest::Client::builder();
-
+    println!("build Client!");
     if let Some(max_redirections) = self.max_redirections {
       client_builder = client_builder.redirect(if max_redirections == 0 {
         reqwest::redirect::Policy::none()
@@ -83,7 +92,7 @@ impl ClientBuilder {
     if let Some(connect_timeout) = self.connect_timeout {
       client_builder = client_builder.connect_timeout(connect_timeout);
     }
-
+  client_builder = client_builder.no_proxy();
     let client = client_builder.build()?;
     Ok(Client(client))
   }

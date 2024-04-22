@@ -62,6 +62,7 @@ use std::time::Duration;
 
 use http::header::{HeaderName, HeaderValue};
 use semver::Version;
+ 
 use time::OffsetDateTime;
 
 pub use self::{core::RemoteRelease, error::Error};
@@ -233,6 +234,14 @@ impl<R: Runtime> UpdateBuilder<R> {
     self
   }
 
+
+  pub fn endpoint_url(mut self, target: impl Into<String>) -> Self {
+ 
+   self.inner.urls.clear();
+   self.inner.urls.push(target.into() );
+   self
+  }
+
   /// Sets a closure that is invoked to compare the current version and the latest version returned by the updater server.
   /// The first argument is the current version, and the second one is the latest version.
   ///
@@ -402,18 +411,41 @@ impl<R: Runtime> UpdateResponse<R> {
 }
 
 /// Check if there is any new update with builtin dialog.
-pub(crate) async fn check_update_with_dialog<R: Runtime>(handle: AppHandle<R>) {
-  let updater_config = handle.config().tauri.updater.clone();
-  let package_info = handle.package_info().clone();
-  if let Some(endpoints) = updater_config.endpoints.clone() {
-    let endpoints = endpoints
+ 
+  pub fn get_endpoints<R: Runtime>(handle: &AppHandle<R>) -> Option<Vec<String>> {
+ 
+    let updater_config = handle.config().tauri.updater.clone();
+    println!("get_endpoints");
+ 
+    if let Some(ep) = &handle.updater_settings.endpoint_handle{ 
+      println!("Some 1 {0}",ep);
+      return Some(vec![ep.into()]);
+    }
+    else {
+     
+      let endpoints = updater_config.endpoints.unwrap()
       .iter()
       .map(|e| e.to_string())
       .collect::<Vec<String>>();
 
+      println!("Some 2{:?}",endpoints);
+
+  return Some(endpoints);
+    }
+
+ 
+}
+
+pub(crate) async fn check_update_with_dialog<R: Runtime>(handle: AppHandle<R>) {
+  let updater_config = handle.config().tauri.updater.clone();
+  let package_info = handle.package_info().clone();
+   
+  if let Some(endpoints) = get_endpoints(&handle)  {
     let mut builder = self::core::builder(handle.clone())
       .urls(&endpoints[..])
       .current_version(package_info.version);
+      
+
     if let Some(target) = &handle.updater_settings.target {
       builder = builder.target(target);
     }
@@ -495,24 +527,25 @@ pub(crate) async fn download_and_install<R: Runtime>(update: core::Update<R>) ->
   }
   update_result
 }
+ 
 
 /// Initializes the [`UpdateBuilder`] using the app configuration.
 pub fn builder<R: Runtime>(handle: AppHandle<R>) -> UpdateBuilder<R> {
-  let updater_config = &handle.config().tauri.updater;
+   
   let package_info = handle.package_info().clone();
 
   // prepare our endpoints
-  let endpoints = updater_config
-    .endpoints
-    .as_ref()
-    .expect("Something wrong with endpoints")
-    .iter()
-    .map(|e| e.to_string())
-    .collect::<Vec<String>>();
+  
+  let mut builder = self::core::builder(handle.clone());
+ 
+  
+  if let Some(endpoints) = get_endpoints(&handle )  { 
+     builder = builder.urls(&endpoints[..]);
+  }
+    
+  builder = builder.current_version(package_info.version);
 
-  let mut builder = self::core::builder(handle.clone())
-    .urls(&endpoints[..])
-    .current_version(package_info.version);
+
   if let Some(target) = &handle.updater_settings.target {
     builder = builder.target(target);
   }

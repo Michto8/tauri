@@ -239,6 +239,7 @@ impl<R: Runtime> GlobalWindowEvent<R> {
 #[derive(Debug, Clone, Default)]
 pub(crate) struct UpdaterSettings {
   pub(crate) target: Option<String>,
+  pub(crate) endpoint_handle: Option<String>,
 }
 
 /// The path resolver is a helper for the application-specific [`crate::api::path`] APIs.
@@ -1515,6 +1516,12 @@ impl<R: Runtime> Builder<R> {
   #[cfg(updater)]
   pub fn updater_target<T: Into<String>>(mut self, target: T) -> Self {
     self.updater_settings.target.replace(target.into());
+    self
+  }
+
+  #[cfg(updater)]
+  pub fn updater_endpoint_handle<T: Into<String>>(mut self, endpoint: T) -> Self {
+    self.updater_settings.endpoint_handle.replace(endpoint.into());
     self
   }
 
