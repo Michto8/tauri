@@ -3241,6 +3241,10 @@ fn create_webview<T: UserEvent>(
     }
   };
 
+
+  
+
+
   if webview_attributes.clipboard {
     webview_builder.webview.clipboard = true;
   }
@@ -3249,9 +3253,10 @@ fn create_webview<T: UserEvent>(
   {
     webview_builder = webview_builder.with_devtools(true);
   }
-
+ 
   let webview = webview_builder
     .with_web_context(web_context)
+     
     .build()
     .map_err(|e| Error::CreateWebview(Box::new(e)))?;
 
@@ -3264,8 +3269,17 @@ fn create_webview<T: UserEvent>(
 
     let mut token2 = EventRegistrationToken::default();
 
-
+  
     unsafe{
+      println!("Init CoreWebView2");
+      Error::CreateWebview(Box::new(Error::FailedToSendMessage));
+    controller.CoreWebView2().and_then(|opt| {
+      println!("CoreWebView2");
+
+      opt.Settings().and_then(|settings| {
+        settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
+      })
+    });
       controller.add_AcceleratorKeyPressed(&AcceleratorKeyPressedEventHandler::create(Box::new(move |_x,y|{
        match y{
         Some(f)=>{
@@ -3273,7 +3287,7 @@ fn create_webview<T: UserEvent>(
           let mut vk: u32 = 0;
           let z=f.VirtualKey(&mut vk);
 
-          println!("TEST");
+          // println!("TEST");
           match z {
             Ok(zf)=>{
               let ks= windows::Win32::UI::Input::KeyboardAndMouse::GetKeyState(i32::from(17u16));
@@ -3281,7 +3295,7 @@ fn create_webview<T: UserEvent>(
 
               if (vk==74){
                 test = ::windows::Win32::Foundation::BOOL(1);
-                println!("CTRL J DISABLE {} {} " ,vk.to_string(), ks.to_string());
+                println!("CTRL [J] DISABLE {} {} " ,vk.to_string(), ks.to_string());
 
               } else{
                 println!("KB {} {} " ,vk.to_string(), ks.to_string());
