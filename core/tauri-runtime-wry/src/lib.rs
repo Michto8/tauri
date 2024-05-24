@@ -3272,7 +3272,7 @@ fn create_webview<T: UserEvent>(
   
     unsafe{
       println!("Init CoreWebView2");
-      Error::CreateWebview(Box::new(Error::FailedToSendMessage));
+      // Error::CreateWebview(Box::new(Error::FailedToSendMessage));
     controller.CoreWebView2().and_then(|opt| {
       println!("CoreWebView2");
 
