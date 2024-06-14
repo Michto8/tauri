@@ -3287,8 +3287,8 @@ fn create_webview<T: UserEvent>(
 
         let mut settings = xxx.cast::<ICoreWebView2Settings4>().unwrap();
         settings.SetIsPasswordAutosaveEnabled(windows::Win32::Foundation::BOOL(0));
-        settings.SetIsGeneralAutofillEnabled(windows::Win32::Foundation::BOOL(0));
-       settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
+        settings.SetIsGeneralAutofillEnabled(windows::Win32::Foundation::BOOL(0))
+      //  settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
         // ICoreWebView2Settings4::from(&settings).SetIsGeneralAutofillEnabled(false)
       })
     });
