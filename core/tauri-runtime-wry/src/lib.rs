@@ -23,8 +23,8 @@ use tauri_runtime::window::MenuEvent;
 use tauri_runtime::{SystemTray, SystemTrayEvent};
 #[cfg(windows)]
 use webview2_com::FocusChangedEventHandler;
-use webview2_com::AcceleratorKeyPressedEventHandler;
-use windows::Win32::UI::Input::KeyboardAndMouse::VK_CONTROL;
+use webview2_com::{AcceleratorKeyPressedEventHandler, Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4};
+use windows::{core::{IUnknown, Interface}, Win32::UI::Input::KeyboardAndMouse::VK_CONTROL};
 #[cfg(windows)]
 use windows::Win32::{Foundation::HWND, System::WinRT::EventRegistrationToken};
 #[cfg(target_os = "macos")]
@@ -3272,12 +3272,24 @@ fn create_webview<T: UserEvent>(
   
     unsafe{
       println!("Init CoreWebView2");
+     
+    
       // Error::CreateWebview(Box::new(Error::FailedToSendMessage));
     controller.CoreWebView2().and_then(|opt| {
-      println!("CoreWebView2");
 
+      
+      //.SetIsPasswordAutosaveEnabled(false);
+      println!("CoreWebView2");
+     
       opt.Settings().and_then(|settings| {
-        settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
+         
+       let  xxx  = IUnknown::from(settings);
+
+        let mut settings = xxx.cast::<ICoreWebView2Settings4>().unwrap();
+        settings.SetIsPasswordAutosaveEnabled(windows::Win32::Foundation::BOOL(0));
+        settings.SetIsGeneralAutofillEnabled(windows::Win32::Foundation::BOOL(0));
+       settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
+        // ICoreWebView2Settings4::from(&settings).SetIsGeneralAutofillEnabled(false)
       })
     });
       controller.add_AcceleratorKeyPressed(&AcceleratorKeyPressedEventHandler::create(Box::new(move |_x,y|{
