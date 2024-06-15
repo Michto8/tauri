@@ -3277,66 +3277,75 @@ fn create_webview<T: UserEvent>(
       println!("CoreWebView2");
 
       opt.Settings().and_then(|settings| {
+
+      //   let  xxx  = IUnknown::from(settings);
+
+      //   let mut settings = xxx.cast::<ICoreWebView2Settings4>().unwrap();
+      //   settings.SetIsPasswordAutosaveEnabled(windows::Win32::Foundation::BOOL(0));
+      //   settings.SetIsGeneralAutofillEnabled(windows::Win32::Foundation::BOOL(0))
+      // //  settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
+
+
         settings.SetAreDefaultContextMenusEnabled(windows::Win32::Foundation::BOOL(0))
       })
     });
-      controller.add_AcceleratorKeyPressed(&AcceleratorKeyPressedEventHandler::create(Box::new(move |_x,y|{
-       match y{
-        Some(f)=>{
-          let mut test=::windows::Win32::Foundation::BOOL(0);
-          let mut vk: u32 = 0;
-          let z=f.VirtualKey(&mut vk);
+    //   controller.add_AcceleratorKeyPressed(&AcceleratorKeyPressedEventHandler::create(Box::new(move |_x,y|{
+    //    match y{
+    //     Some(f)=>{
+    //       let mut test=::windows::Win32::Foundation::BOOL(0);
+    //       let mut vk: u32 = 0;
+    //       let z=f.VirtualKey(&mut vk);
 
-          // println!("TEST");
-          match z {
-            Ok(zf)=>{
-              let ks= windows::Win32::UI::Input::KeyboardAndMouse::GetKeyState(i32::from(17u16));
+    //       // println!("TEST");
+    //       match z {
+    //         Ok(zf)=>{
+    //           let ks= windows::Win32::UI::Input::KeyboardAndMouse::GetKeyState(i32::from(17u16));
 
 
-              if (vk==74){
-                test = ::windows::Win32::Foundation::BOOL(1);
-                println!("CTRL [J] DISABLE {} {} " ,vk.to_string(), ks.to_string());
+    //           if (vk==74){
+    //             test = ::windows::Win32::Foundation::BOOL(1);
+    //             println!("CTRL [J] DISABLE {} {} " ,vk.to_string(), ks.to_string());
 
-              } else{
-                println!("KB {} {} " ,vk.to_string(), ks.to_string());
-              }
+    //           } else{
+    //             println!("KB {} {} " ,vk.to_string(), ks.to_string());
+    //           }
               
             
-            }
-            _=>{
-
-            }
-          }
-
-          Some(f.SetHandled( test));
-        }
-        _=>{
-
-        }
-       }
-    //    RETURN_IF_FAILED(m_contentController->add_AcceleratorKeyPressed(Callback<ICoreWebView2AcceleratorKeyPressedEventHandler>(
-    //     [this](ICoreWebView2Controller* sender, ICoreWebView2AcceleratorKeyPressedEventArgs* args) -> HRESULT
-    // {
-    //         COREWEBVIEW2_KEY_EVENT_KIND kind;
-    //         RETURN_IF_FAILED(args->get_KeyEventKind(&kind));
-    //         if (kind == COREWEBVIEW2_KEY_EVENT_KIND_KEY_DOWN || kind == COREWEBVIEW2_KEY_EVENT_KIND_SYSTEM_KEY_DOWN)
-    //         {
-    //             UINT key;
-    //             RETURN_IF_FAILED(args->get_VirtualKey(&key));
-    //             if (key == 0x25) // Left Arrow
-    //             {
-    //                 COREWEBVIEW2_PHYSICAL_KEY_STATUS status;
-    //                 RETURN_IF_FAILED(args->get_PhysicalKeyStatus(&status));
-    //                 if (GetKeyState(VK_MENU) & 0x8000) // ALT + Left Arrow
-    //                     RETURN_IF_FAILED(args->put_Handled(TRUE));
-    //             }
     //         }
+    //         _=>{
 
-    //     return S_OK;
-    // }).Get(), &m_acceleratorKeyPressedToken));
+    //         }
+    //       }
 
-        Ok(())
-      })), &mut token2);
+    //       Some(f.SetHandled( test));
+    //     }
+    //     _=>{
+
+    //     }
+    //    }
+    // //    RETURN_IF_FAILED(m_contentController->add_AcceleratorKeyPressed(Callback<ICoreWebView2AcceleratorKeyPressedEventHandler>(
+    // //     [this](ICoreWebView2Controller* sender, ICoreWebView2AcceleratorKeyPressedEventArgs* args) -> HRESULT
+    // // {
+    // //         COREWEBVIEW2_KEY_EVENT_KIND kind;
+    // //         RETURN_IF_FAILED(args->get_KeyEventKind(&kind));
+    // //         if (kind == COREWEBVIEW2_KEY_EVENT_KIND_KEY_DOWN || kind == COREWEBVIEW2_KEY_EVENT_KIND_SYSTEM_KEY_DOWN)
+    // //         {
+    // //             UINT key;
+    // //             RETURN_IF_FAILED(args->get_VirtualKey(&key));
+    // //             if (key == 0x25) // Left Arrow
+    // //             {
+    // //                 COREWEBVIEW2_PHYSICAL_KEY_STATUS status;
+    // //                 RETURN_IF_FAILED(args->get_PhysicalKeyStatus(&status));
+    // //                 if (GetKeyState(VK_MENU) & 0x8000) // ALT + Left Arrow
+    // //                     RETURN_IF_FAILED(args->put_Handled(TRUE));
+    // //             }
+    // //         }
+
+    // //     return S_OK;
+    // // }).Get(), &m_acceleratorKeyPressedToken));
+
+    //     Ok(())
+    //   })), &mut token2);
 
     }
     unsafe {
