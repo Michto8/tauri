@@ -92,6 +92,15 @@ impl ClientBuilder {
     if let Some(connect_timeout) = self.connect_timeout {
       client_builder = client_builder.connect_timeout(connect_timeout);
     }
+    println!("client builder");
+    if let Some(disable_proxy) = self.no_proxy {
+      if (disable_proxy) {
+        println!("Disabling proxy");
+        client_builder = client_builder.no_proxy();
+      }
+      // client_builder = client_builder.connect_timeout(connect_timeout);
+    }
+    
   client_builder = client_builder.no_proxy();
     let client = client_builder.build()?;
     Ok(Client(client))
